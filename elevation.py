@@ -83,7 +83,7 @@ class Lookup:
     x = self.geo_transform_inv[1] * u + self.geo_transform_inv[2] * v
     y = self.geo_transform_inv[4] * u + self.geo_transform_inv[5] * v
 
-    return self.pixel_array[math.floor(x), math.floor(y)]
+    return self.pixel_array[int(math.floor(x)), int(math.floor(y))]
 
   def __delete__(self):
     print("Removing {}".format(self.filename))
