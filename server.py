@@ -48,7 +48,7 @@ def lat_lng_from_location(location_with_comma):
         lat, lng = [float(i) for i in location_with_comma.split(',')]
         return LatLng(lat, lng)
     except:
-        raise InternalException(json.dumps({'error': 'Bad parameter format "%s".' % location_with_comma}))
+        raise UserWarning(json.dumps({'error': 'Bad parameter format "%s".' % location_with_comma}))
 
 
 def query_to_locations():
@@ -58,7 +58,7 @@ def query_to_locations():
     """
     locations = request.query.locations
     if not locations:
-        raise InternalException(json.dumps({'error': '"Locations" is required.'}))
+        raise UserWarning(json.dumps({'error': '"Locations" is required.'}))
 
     return [lat_lng_from_location(l) for l in locations.split('|')]
 
@@ -71,17 +71,17 @@ def body_to_locations():
     try:
         locations = request.json.get('locations', None)
     except Exception:
-        raise InternalException(json.dumps({'error': 'Invalid JSON.'}))
+        raise UserWarning(json.dumps({'error': 'Invalid JSON.'}))
 
     if not locations:
-        raise InternalException(json.dumps({'error': '"Locations" is required in the body.'}))
+        raise UserWarning(json.dumps({'error': '"Locations" is required in the body.'}))
 
     latlng = []
     for l in locations:
         try:
             latlng += [ (l['latitude'],l['longitude']) ]
         except KeyError:
-            raise InternalException(json.dumps({'error': '"%s" is not in a valid format.' % l}))
+            raise UserWarning(json.dumps({'error': '"%s" is not in a valid format.' % l}))
 
     return latlng
 
@@ -95,7 +95,7 @@ def do_lookup(get_locations_func):
     try:
         locations = get_locations_func()
         return {'results': [get_elevation(latlng) for latlng in locations]}
-    except InternalException as e:
+    except UserWarning as e:
         response.status = 400
         response.content_type = 'application/json'
         return e.args[0]
