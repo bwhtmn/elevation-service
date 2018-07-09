@@ -79,7 +79,10 @@ def body_to_locations():
     latlng = []
     for l in locations:
         try:
-            latlng += [ (l['latitude'],l['longitude']) ]
+            lat = l['latitude']
+            lng = l['longitude']
+            obj = LatLng(float(lat),float(lng))
+            latlng.append(obj)
         except KeyError:
             raise UserWarning(json.dumps({'error': '"%s" is not in a valid format.' % l}))
 
